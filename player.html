@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Player MPEG-DASH Automático</title>
+
+    <!-- Dash.js -->
+    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        #loading {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+
+        video {
+            width: 80%;
+            max-width: 720px;
+            border: 2px solid #00bcd4;
+            border-radius: 8px;
+            background-color: #000;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Player MPEG-DASH</h1>
+    <div id="loading">Carregando vídeo...</div>
+    <video id="videoPlayer" controls></video>
+
+    <script>
+        async function findMpdFile() {
+            // Faz um "scan" básico da pasta atual pra procurar um .mpd
+            const response = await fetch('.', { method: 'GET' });
+            const text = await response.text();
+
+            // Regex pra tentar pegar o primeiro .mpd listado
+            const match = text.match(/href="([^"]+\.mpd)"/i);
+            if (match && match[1]) {
+                return match[1];
+            }
+            return null;
+        }
+
+        async function startPlayer() {
+            const mpdFile = 'file.mpd'; // Substitua pelo caminho correto do arquivo .mpd
+            // const mpdFile = await findMpdFile(); // Descomente se quiser fazer o scan automático
+            if (!mpdFile) {
+                document.getElementById('loading').textContent = "Arquivo .mpd não encontrado!";
+                return;
+            }
+
+            const video = document.getElementById('videoPlayer');
+            const player = dashjs.MediaPlayer().create();
+            player.initialize(video, mpdFile, true);
+
+            document.getElementById('loading').style.display = 'none';
+            video.style.display = 'block';
+        }
+
+        startPlayer();
+    </script>
+</body>
+</html>
