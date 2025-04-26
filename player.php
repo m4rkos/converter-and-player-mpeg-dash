@@ -19,7 +19,7 @@ if (is_dir($videosPath)) {
     <meta charset="UTF-8">
     <title>Player MPEG-DASH com múltiplas pastas</title>
 
-    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+    <script src="./assets/js/dash.all.min.js"></script>
 
     <style>
         body {
